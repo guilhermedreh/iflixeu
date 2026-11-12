@@ -18,21 +18,25 @@ jobs:
                     POSTGRES_USER: postgres
                     POSTGRES_PASSWORD: postgres
                 ports:
-                    5432:5432
+                    - 5432:5432
         steps:
-            - name: baixar código fonte GH
+          - name: baixar código fonte GH
             uses: actions/checkout@v6
-            - name: confoigurar jav
+            
+          - name: configurar jav
             uses: actions/setup-java@v5
             with:
                 distribution: temurin
                 java-version: '21'
-            - name: compilar o app
-                run: ./mvnw -B verify
-                env:
-                    SPRING_DATASOURCE_URL:jdbc:postgres://localhost:5432/iflix
-            - name: gerar/publicar o jar
+            
+          - name: compilar o app
+            run: ./mvnw -B verify
+            env:
+              SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/iflix
+
+          - name: Gerar/publicar o jar
             uses: actions/upload-artifact@v7
             with:
-                name: iflix-jar
-                path: backend/target/*.jar
+              name: iflix-jar
+              path: backend/target/*.jar
+
