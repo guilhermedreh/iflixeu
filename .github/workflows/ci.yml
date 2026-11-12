@@ -1,0 +1,38 @@
+name: CI
+
+on:
+    push:
+        branches: main
+
+jobs:
+    construcao:
+        runs-on: ubuntu-latest
+        defaults: 
+            run: 
+                working-directory: backend
+        services:
+            postgres:
+                image: postgres:16
+                env:
+                    POSTGRES_DB: iflix
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                ports:
+                    5432:5432
+        steps:
+            - name: baixar código fonte GH
+            uses: actions/checkout@v6
+            - name: confoigurar jav
+            uses: actions/setup-java@v5
+            with:
+                distribution: temurin
+                java-version: '21'
+            - name: compilar o app
+                run: ./mvnw -B verify
+                env:
+                    SPRING_DATASOURCE_URL:jdbc:postgres://localhost:5432/iflix
+            - name: gerar/publicar o jar
+            uses: actions/upload-artifact@v7
+            with:
+                name: iflix-jar
+                path: backend/target/*.jar
